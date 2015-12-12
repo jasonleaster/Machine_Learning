@@ -62,7 +62,7 @@ UnkownPoint = numpy.array([
 [2, 'L']
 ]).transpose()
 
-print "Test Case 2:"
+print "Test Case 1:"
 print a.prediction(UnkownPoint)
 #-------------------End of test case 1  -------------------------
 
