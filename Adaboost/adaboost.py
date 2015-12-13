@@ -42,7 +42,7 @@ class AdaBoost:
 
     def is_good_enough(self):
         output = numpy.zeros((self.SamplesNum, 1))
-        for i in range(self.N + 1):
+        for i in range(self.N+1):
             output += self.G[i].prediction(self._Mat) * self.alpha[i]
 
         output = numpy.sign(output)
@@ -64,7 +64,7 @@ class AdaBoost:
 	classifier.
 	"""
 
-        for m in range(4):
+        for m in range(M):
             self.G[m] = self.Weaker(self._Mat, self._Tag, self.W)
             self.G[m].train()
 
@@ -96,6 +96,7 @@ class AdaBoost:
         for i in range(self.N + 1):
             output += self.G[i].prediction(Mat) * self.alpha[i]
 
+        print output
         output = numpy.sign(output)
 
         return output

@@ -54,9 +54,9 @@ class DecisionStump:
 
             if errorRate < minErr:
                 minErr = errorRate
-                accTh  = t
+                accTh  = t 
 
-        return minErr, accTh
+        return minErr, accTh # minimum error rate, acceptable threshold
 
     def train(self, steps = 100):
         """
