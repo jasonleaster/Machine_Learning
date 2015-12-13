@@ -46,5 +46,13 @@ ExpVal = ExpVal.flatten()
 
 a = BoostingTree(Original_Data, ExpVal)
 
-a.train(10)
+a.train(100)
+
+Unknow = numpy.array([
+[11],
+[1]
+]).transpose()
+
+print "Test case input:", Unknow
+print "Predict the output :", a.prediction(Unknow)
 

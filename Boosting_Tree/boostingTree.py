@@ -3,8 +3,6 @@ Programmer  :   EOF
 Date        :   2015.11.22
 File        :   adaboost.py
 
-File Description:
-    Boosting Tree
 """
 import numpy
 from decisionStump import *
@@ -15,8 +13,7 @@ class BoostingTree:
         """
         self._Mat: A matrix which store the samples. Every column 
                    vector in this matrix is a point of sample.
-        self._Tag: 
-    	self.W: A vecter which is the weight of weaker classifier
+        self._Exp: The expected val of training samples.
     	self.N: A number which descripte how many weaker classifier
     		is enough for solution.
 	"""
@@ -31,25 +28,25 @@ class BoostingTree:
 
         self.Weaker = WeakerClassifier
 
-        # Initialization of weight
-        self.W = [1.0/self.SamplesNum for i in range(self.SamplesNum)]
-
         self.N = 0
         self.T = {}
 
         self.residual = numpy.array(self._Exp)
 
-        self.theta = 0.2
+        self.theta = 0.1
 
     def is_good_enough(self):
         output = numpy.array([0.0 for i in range(self.SamplesNum)])
 
+        #Use all weak classifier to do prediction and construct into
+        #a stronger classifier
         for i in range(self.N + 1):
             output += numpy.array(self.T[i].prediction(self._Mat))
             summer = 0
             for j in range(self.SamplesNum):
                 summer += (output[j] - self._Exp[j]) ** 2
 
+        #return Ture, if the variance smaller than tolerance
         if summer < self.theta:
             return True
         else:    
@@ -67,6 +64,7 @@ class BoostingTree:
 	"""
 
         for m in range(M):
+            #We use residual as expected output to train the weak classifier
             self.T[m] = self.Weaker(self._Mat, self.residual)
             self.T[m].train()
 
@@ -86,4 +84,9 @@ class BoostingTree:
     def prediction(self, Mat):
 
         Mat = numpy.array(Mat)
-        output = numpy.zeros((Mat.shape[1], 1))
+        output = numpy.array([0.0 for i in range(Mat.shape[1])])
+
+        for i in range(self.N + 1):
+            output += numpy.array(self.T[i].prediction(Mat))
+
+        return output
