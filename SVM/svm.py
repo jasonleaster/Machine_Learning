@@ -9,7 +9,7 @@ Date        :   2015.12.13
 import numpy
 
 class SVM:
-    def __init__(self, Mat, Tag, C = 10):
+    def __init__(self, Mat, Tag, C = 2):
         self._Mat = numpy.array(Mat)
         self._Tag = numpy.array(Tag).flatten()
 
@@ -26,7 +26,10 @@ class SVM:
 
         self.Kernel = self.Linear_Kernel
 
-        self.SupVec = []
+        self.SupVec = [False for i in range(self.SampleNum)]
+
+        self.P1 = None
+        self.P2 = None
 
     """
     Inner product of point @i and @j.
@@ -59,7 +62,11 @@ class SVM:
         b_KKTcond_Points = []
         
         for i in range(self.SampleNum):
+            if i == self.P1 or i == self.P2:
+                continue
+
             self.updateE(i)
+
 
         for i in range(self.SampleNum):
             if 0 < self.alpha[i] and self.alpha[i] < self.C:
@@ -112,13 +119,14 @@ class SVM:
     by self._Mat[:, P1] and self._Mat[:, P2]
     """
     def optimal(self, P1, P2):
-        if self._Tag[P1] == self._Tag[P2]:
+
+        if self._Tag[P1] != self._Tag[P2]:
             k = self.alpha[P2] - self.alpha[P1]
-            L = max(0, k)
+            L = max(0.0, k)
             H = min(self.C, self.C + k)
         else:
             k = self.alpha[P2] + self.alpha[P1]
-            L = max(0, k - self.C)
+            L = max(0.0, k - self.C)
             H = min(self.C, k)
 
         K11 = self.Kernel(P1, P1)
@@ -134,10 +142,9 @@ class SVM:
         new_alpha_unc_P2 = old_alpha_P2 + \
         (self._Tag[P2] * (self.E[P1] - self.E[P2]) /miu)
 
-
-        if self.alpha[P2] > H:
+        if new_alpha_unc_P2 > H:
             new_alpha_P2 = H
-        elif self.alpha[P2] < L:
+        elif new_alpha_unc_P2 < L:
             new_alpha_P2 = L
         else:
             new_alpha_P2 = new_alpha_unc_P2
@@ -146,46 +153,35 @@ class SVM:
         new_alpha_P1 = old_alpha_P1 + self._Tag[P1] * self._Tag[P2] * \
                 (old_alpha_P2 - new_alpha_P2)
 
-        self.alpha[P1] = new_alpha_P1
-        self.alpha[P2] = new_alpha_P2
+
+        b_P1_new = - self.E[P1]\
+                - self._Tag[P1] * K11 * (new_alpha_P1 - old_alpha_P1) \
+                - self._Tag[P2] * K12 * (new_alpha_P2 - old_alpha_P2) \
+                + self.b
+
+        b_P2_new = - self.E[P2] \
+                - self._Tag[P1] * K12 * (new_alpha_P1 - old_alpha_P1) \
+                - self._Tag[P2] * K22 * (new_alpha_P2 - old_alpha_P2) \
+                + self.b
 
 
-        """
-        update b
-        """
-        new_E_P1 = 0
-        for i in range(self.SampleNum):
-            if i == P1 or i == P2:
-                continue
+        if new_alpha_P1 == self.alpha[P1] or new_alpha_P2 == self.alpha[P2]:
+            old_P1 = P1
+            old_P2 = P2
 
-            new_E_P1 += self.alpha[i] * self._Tag[i] * self.Kernel(i, P1)
+            while P1 == P2 or (P1 == old_P1 and P2 == old_P2):
+                P1 = numpy.random.randint(self.SampleNum)
+                P2 = numpy.random.randint(self.SampleNum)
 
-        new_E_P1 += old_alpha_P1 * self._Tag[P1] * self.Kernel(P1, P1)
-        new_E_P1 += old_alpha_P2 * self._Tag[P2] * self.Kernel(P2, P1)
-        new_E_P1 += self.b - self._Tag[P1]
-
-        
-        new_E_P2 = 0
-        for i in range(self.SampleNum):
-            if i == P1 or i == P2:
-                continue
-
-            new_E_P2 += self.alpha[i] * self._Tag[i] * self.Kernel(i, P2)
-
-        new_E_P2 += old_alpha_P1 * self._Tag[P1] * self.Kernel(P1, P2)
-        new_E_P2 += old_alpha_P2 * self._Tag[P2] * self.Kernel(P2, P2)
-        new_E_P2 += self.b - self._Tag[P2]
-
-        b_P1_new = -new_E_P1 - self._Tag[P1] * self.Kernel(P1, P1) * (new_alpha_P1 - old_alpha_P1) \
-                             - self._Tag[P2] * self.Kernel(P2, P1) * (new_alpha_P2 - old_alpha_P2) + self.b
-
-        b_P2_new = -new_E_P2 - self._Tag[P1] * self.Kernel(P1, P2) * (new_alpha_P1 - old_alpha_P1) \
-                             - self._Tag[P2] * self.Kernel(P2, P2) * (new_alpha_P2 - old_alpha_P2) + self.b
-
+            self.P1 = P1
+            self.P2 = P2
+            self.optimal(P1, P2)
+            return
 
         if 0 < new_alpha_P1 and new_alpha_P1 < self.C and \
            0 < new_alpha_P2 and new_alpha_P2 < self.C:
-            assert b_P1_new == b_P2_new
+               if abs(b_P1_new - b_P2_new) > 0.01:
+                   print "Attention! Maybe ERROR :( b1 == b2"
 
         if new_alpha_P1 == 0 or new_alpha_P1 == self.C or \
            new_alpha_P2 == 0 or new_alpha_P2 == self.C:
@@ -193,23 +189,49 @@ class SVM:
         else:
             self.b = b_P1_new
 
-        self.E[P1] = new_E_P1
-        self.E[P2] = new_E_P2
         self.alpha[P1] = new_alpha_P1
         self.alpha[P2] = new_alpha_P2
 
         for i in range(self.SampleNum):
-            summer = 0.0
-            for j in range(self.SampleNum):
-                if 0 < self.alpha[j] and self.alpha[j] < self.C:
-                    # self.SupVec.append(i)
-                    summer += self._Tag[j] * self.alpha[j] * self.Kernel(i, j) - self._Tag[i]
-            self.E[i] = summer    
+            if 0 < self.alpha[i] and self.alpha[i] < self.C:
+                self.SupVec[i] = True
+            else:
+                self.SupVec[i] = False
+    
+        """
+        update the new E for P1 and P2
+        """
+        summer = 0.0
+        for j in range(self.SampleNum):
+            if self.SupVec[j] == True:
+                summer += self.alpha[j] * self._Tag[j] * self.Kernel(P1, j)
+
+        new_E_P1 = summer + self.b - self._Tag[P1]
+
+        summer = 0.0
+        for j in range(self.SampleNum):
+            if self.SupVec[j] == True:
+                summer += self.alpha[j] * self._Tag[j] * self.Kernel(P2, j)
+
+        new_E_P2 = summer + self.b - self._Tag[P2]
+
+        self.E[P1] = new_E_P1
+        self.E[P2] = new_E_P2
 
     def train(self):
+        times = 0
         while self.run_or_not():
+            times += 1
+            print "Training time:", times
+
+            if times == 200:
+                break
+
             P1 = self.findFirstVar()
             P2 = self.findSecondVar(P1)
+
+            self.P1 = P1
+            self.P2 = P2
 
             self.optimal(P1, P2)
 
@@ -224,6 +246,7 @@ class SVM:
                 self.b = self._Tag[j] - summer
 
                 print "Congradulation! Traning finished successfully."
+                print self.W, self.b
                 break
 
     def run_or_not(self):
