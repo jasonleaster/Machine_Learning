@@ -4,36 +4,50 @@ E-mail      :   jasonleaster@163.com
 File        :   svm.py
 Date        :   2015.12.13
 
+You know ... It's hard time but it's not too bad to say give up.
+
 """
 
 import numpy
 
 class SVM:
-    def __init__(self, Mat, Tag, C = 2):
+    def __init__(self, Mat, Tag, C = 2, MAXITER = 200):
         self._Mat = numpy.array(Mat)
         self._Tag = numpy.array(Tag).flatten()
 
         self.SampleDem = self._Mat.shape[0]
         self.SampleNum = self._Mat.shape[1]
 
+        # Castiagte factor
         self.C = C
-
+        
+        # Each sample point have a lagrange factor
         self.alpha = numpy.array([0.0 for i in range(self.SampleNum)])
+        
+        # The expected weight vector which we want the machine to learn
         self.W     = numpy.array([0.0 for i in range(self.SampleDem)])
+
+        # intercept
         self.b     = 0.0
 
+        # Difference between the expected output and output of current machine
         self.E     = numpy.array([0.0 for i in range(self.SampleNum)])
 
         self.Kernel = self.Linear_Kernel
 
+        # Bool value for sample point is a Supported Vector or not
         self.SupVec = [False for i in range(self.SampleNum)]
 
+        # Points which are selected in current time.
         self.P1 = None
         self.P2 = None
 
+        #Max times for training SVM
+        self.MAXITER = MAXITER
+
     """
-    Inner product of point @i and @j.
-    K(i,j)
+    Linear Kernel which will compute the 
+    inner product of point @i and @j. K(i,j)
     """
     def Linear_Kernel(self, i, j):
         summer = 0.0
@@ -42,6 +56,9 @@ class SVM:
 
         return summer
 
+    """
+    Current output for sample point @i
+    """
     def G(self, i):
         summer = 0.0
         for j in range(self.SampleNum):
@@ -53,10 +70,16 @@ class SVM:
 
     """
     update the cost for prediction when x-i(Mat[:, i]) as input.
+    where @i is not the index of current selected point(P1, P2).
     """
     def updateE(self, i):
         self.E[i] = self.G(i) - self._Tag[i]
 
+    """
+    @findFirstVar() function will help us to find the first Variable
+    which's alpha value wanted to be updated. We return the index of 
+    that point as @P1
+    """
     def findFirstVar(self):
         firstPointIndex = None
         b_KKTcond_Points = []
@@ -90,6 +113,9 @@ class SVM:
 
         return firstPointIndex
 
+    """
+    Find the second variable which's alpha value want to be updated
+    """
     def findSecondVar(self, firstPointIndex):
         secondPointIndex = None
 
@@ -117,6 +143,9 @@ class SVM:
         @P1 and @P2 are index of the first selected point 
     and the second selected point. You can get the point 
     by self._Mat[:, P1] and self._Mat[:, P2]
+
+    @L : lowest boundary of current optimal problem
+    @H : highest boundary of current optimal problem
     """
     def optimal(self, P1, P2):
 
@@ -133,14 +162,14 @@ class SVM:
         K22 = self.Kernel(P2, P2)
         K12 = self.Kernel(P1, P2)
 
-        miu = K11 + K22 - 2*K12
+        yita = K11 + K22 - 2*K12
 
         old_alpha_P1 = self.alpha[P1]
         old_alpha_P2 = self.alpha[P2]
 
-        # new alpha_2
+        # candidate for new alpha_2
         new_alpha_unc_P2 = old_alpha_P2 + \
-        (self._Tag[P2] * (self.E[P1] - self.E[P2]) /miu)
+        (self._Tag[P2] * (self.E[P1] - self.E[P2]) /yita)
 
         if new_alpha_unc_P2 > H:
             new_alpha_P2 = H
@@ -165,6 +194,12 @@ class SVM:
                 + self.b
 
 
+        """
+        Attention!
+        If there difference between the old alpha and the new alpha,
+        we should choose another P1 or P2. We DON'T need to drop ALL
+        two old selected point but anyone also will be ok.
+        """
         if new_alpha_P1 == self.alpha[P1] or new_alpha_P2 == self.alpha[P2]:
             old_P1 = P1
             old_P2 = P2
@@ -175,6 +210,8 @@ class SVM:
 
             self.P1 = P1
             self.P2 = P2
+
+            # optimal the alpha for selected P1 and P2 recusively.
             self.optimal(P1, P2)
             return
 
@@ -199,7 +236,7 @@ class SVM:
                 self.SupVec[i] = False
     
         """
-        update the new E for P1 and P2
+        update the new cost value E-i for P1 and P2
         """
         summer = 0.0
         for j in range(self.SampleNum):
@@ -224,7 +261,7 @@ class SVM:
             times += 1
             print "Training time:", times
 
-            if times == 200:
+            if times == self.MAXITER:
                 break
 
             P1 = self.findFirstVar()
@@ -235,6 +272,10 @@ class SVM:
 
             self.optimal(P1, P2)
 
+        """
+        Here we finished training. 
+        We calculate the hyper-plane vector self.W and intercept self.b
+        """
         for i in range(self.SampleNum):
             self.W += self.alpha[i] * self._Mat[:, i] * self._Tag[i]
 

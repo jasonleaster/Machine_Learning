@@ -7,8 +7,9 @@ Algorithms which I have implemented:
 * Percetron
 * K Nearest Neighbor
 * Decision Tree
-* AdaBoost
+* AdaBoost (Adaptive Boosting)
 * Boosting Tree
+* SVM (Supported Vecter Machine)
 
 ``` python
 python ./tester.py
