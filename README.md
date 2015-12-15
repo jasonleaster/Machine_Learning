@@ -4,14 +4,19 @@ My Practice about Machine Learning
 
 Algorithms which I have implemented:
 
-* AdaBoost
+* Percetron
 * K Nearest Neighbor
 * Decision Tree
-* Percetron
+* AdaBoost
+* Boosting Tree
 
-You could test these implementation with the corresponding test file which I name it with tester.py in each directory.
+``` python
+python ./tester.py
+```
 
-If you find any thing wrong with my program or other suggestion, you are welcome to touch me by e-mail: jasonleaster@163.com
+You can test these implementation with the corresponding test file which I name it with `tester.py` in each directory.
+
+If you find any thing wrong with my program, you are welcome to touch me by e-mail: jasonleaster@163.com
 
 Thank you :)
 
