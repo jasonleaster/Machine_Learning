@@ -12,7 +12,7 @@ Usage:
 
     3.Prediction. DT.prediction(Test_Case)
 
-    If you a user and have no idea about what a monster this is, 
+    If you are user who have no idea about what a monster this is, 
     just ignore the implementation and call this three API is OK :)
 """
 
