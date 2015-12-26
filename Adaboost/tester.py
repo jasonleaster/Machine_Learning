@@ -17,8 +17,6 @@ from adaboost import AdaBoost
 Samples for AdaBoost
 """
 Original_Data = numpy.array([
-[0.55,  4.4],
-[1.1,   2.8],
 [1.85,  1.95],
 [3.15,  1.7],
 [4,     2.7],
@@ -51,7 +49,6 @@ Original_Data = numpy.array([
 [1.4,   6.65],
 [0.6,   6.75],
 [0.6,   6.85],
-[5.35,  0.90],
 [0.8,   1.00]]).transpose()
 
 Tag = numpy.array([
@@ -65,9 +62,6 @@ Tag = numpy.array([
 [-1],
 [-1],
 [-1],
-[-1],
-[-1],
-[+1],
 [+1],
 [+1],
 [+1],

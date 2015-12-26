@@ -21,6 +21,16 @@ class DecisionStump:
         else:
             self.weight = numpy.array(W)
 
+    def __str__(self):
+
+        string  = "opt_threshold:" + str(self.opt_threshold) + "\n"
+        string += "opt_demention:" + str(self.opt_demention) + "\n"
+        string += "opt_errorRate:" + str(self.opt_errorRate) + "\n"
+        string += "opt_label    :" + str(self.opt_label    ) + "\n"
+        string += "weights      :" + str(self.weight)        + "\n"
+
+        return string
+
     def prediction(self, Mat):
         th    = self.opt_threshold
         label = self.opt_label
