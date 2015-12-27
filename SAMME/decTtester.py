@@ -11,7 +11,8 @@ automatic classifier.
 
 import numpy
 import matplotlib.pyplot as pyplot
-from decisionTree import DecisionTree
+
+from samme import SAMME
 
 Original_Data = numpy.array([
 [0],
@@ -43,7 +44,7 @@ Tag = Tag.flatten()
 
 discrete = [False]
 
-a = DecisionTree(Original_Data, Tag, Discrete = discrete, Depth = 2)
+a = SAMME(Original_Data, Tag, Discrete = discrete)
 
 a.train()
 

@@ -31,7 +31,7 @@ a.train()
 
 # ---------- draw originall data -----------
 x = numpy.arange(-1, 10, 0.01)
-plt.plot(x, -((a.w[1]/a.w[0]) * x + a.b))
+plt.plot(x, -(a.w[1] * x + a.b)/a.w[0])
 
 for i in range(len(Tag)):
     if Tag[i] == +1:

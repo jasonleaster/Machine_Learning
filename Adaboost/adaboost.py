@@ -1,11 +1,14 @@
 """
 Programmer  :   EOF
+Cooperator  :   Wei Chen.
 Date        :   2015.11.22
 File        :   adaboost.py
 
 File Description:
 	AdaBoost is a machine learning meta-algorithm. 
 That is the short for "Adaptive Boosting".
+
+Thanks Wei Chen. Without him, I can't understand AdaBoost in this short time. We help each other and learn this algorithm.
 
 """
 import numpy

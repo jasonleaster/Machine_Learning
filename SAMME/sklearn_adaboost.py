@@ -30,8 +30,8 @@ Tag = numpy.array([
 
 Tag = Tag.flatten()
 
-a = AdaBoostClassifier(DecisionTreeClassifier(max_depth=3), n_estimators = 600, learning_rate = 1)
+a = AdaBoostClassifier(DecisionTreeClassifier(max_depth=2), n_estimators = 600, learning_rate = 1)
 
 a.fit(Original_Data, Tag)
 
-
+print a.predict(Original_Data)

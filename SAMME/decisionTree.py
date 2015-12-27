@@ -212,6 +212,8 @@ class DecisionTree:
     def train(self):
         self.DT = self.makeTree(self._Mat, self._Tag)
 
+        self.proba = self.getProba(self._Mat)
+
     def getProba(self, Mat):
         Dem = Mat.shape[0]
         Num = Mat.shape[1]
@@ -236,22 +238,21 @@ class DecisionTree:
 
     def prediction(self, Mat):
 
-        probability = self.getProba(Mat)
+        probability = self.proba
 
         Num = Mat.shape[1]
         Dem = Mat.shape[0]
 
-        output = [None for i in range(Num)]
+        output = numpy.array([None for i in range(Num)])
 
         for i in range(Num):
             maxval = 0.0
             val = toHashableVal(Mat[:, i])
-            possible_result = None
+            result = None
             for label in self.labels:
                 if probability[val][label] > maxval:
                     maxval = probability[val][label]
-                    possible_result = label
-
-            output[i] = possible_result
+                    result = label
+            output[i] = result
 
         return output
