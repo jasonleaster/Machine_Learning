@@ -79,7 +79,7 @@ class DecisionTree:
         self.DT = Tree()
 
         if Discrete == None:
-            self.Discrete = [True for i in range(self.SamplesDemention)]
+            self.Discrete = [True for i in range(self.SamplesDem)]
         else:
             self.Discrete = Discrete
 
@@ -132,7 +132,7 @@ class DecisionTree:
     @miniumn     : minumn value of Gini-cost
     """
     def makeTree(self, Mat, Tag):
-        miniumn     = 10000.0
+        miniumn     = + numpy.inf
         opt_feature = 0
         opt_val     = 0
 
@@ -146,19 +146,22 @@ class DecisionTree:
             
             for label in self.labels:
                 if label != Tag[0]:
-                        t.counter[label] = 0.0
+                    t.counter[label] = 0.0
                 else:
-                        t.counter[label] = 1.0
+                    t.counter[label] = 1.0
             return t
 
         for f in range(self.SamplesDem):
             if self.Discrete[f] == True:
+                print "ERROR DEBUGGING !"
                 vals = self.feature_dict[f]
             else:
                 vals = Mat[f, :]
 
-            for v in vals:
+            for i in range(len(Tag)):
+                v = Mat[f, i]
                 p = self.Gini(Mat[f], Tag, v, f)
+                p /= self.W[toHashableVal(Mat[:, i])]
                 if p < miniumn:
                     miniumn     = p
                     opt_feature = f
@@ -246,7 +249,7 @@ class DecisionTree:
         output = numpy.array([None for i in range(Num)])
 
         for i in range(Num):
-            maxval = 0.0
+            maxval = -numpy.inf
             val = toHashableVal(Mat[:, i])
             result = None
             for label in self.labels:

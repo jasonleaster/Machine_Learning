@@ -99,7 +99,10 @@ class SAMME:
             for i in range(self.SamplesNum):
                 val = toHashableVal(self._Mat[:, i])
                 for label in self.labels:
-                    proba[val][label] = numpy.log(proba[val][label])
+                    if proba[val][label] < 1e-20:
+                        proba[val][label] = numpy.log(1e-20)
+                    else:
+                        proba[val][label] = numpy.log(proba[val][label])
 
             self.probability[m] = {}
 
@@ -131,7 +134,6 @@ class SAMME:
                 else:
                     #misclassified
                     self.W[val] *= numpy.exp((-1.*(K-1)/K) * summer * (-1))
-
             if self.is_good_enough():
                 print "It's good enough with ", self.N, "weak classifier"
                 break
@@ -164,12 +166,12 @@ class SAMME:
                 val = toHashableVal(Mat[:, i])
 
                 for label in self.labels:
-                    VotingResult[val][label] += proba[val][label] * (self.alpha[m])
+                    VotingResult[val][label] += proba[val][label]
 
         output = numpy.array([None for i in range(Num)])
 
         for i in range(Num):
-            maxval = 0.0
+            maxval = -numpy.inf
             val = toHashableVal(Mat[:, i])
             result = None
             for label in self.labels:

@@ -41,7 +41,7 @@ Tag = numpy.array([
 
 Tag = Tag.flatten()
 
-a = SAMME(Original_Data, Tag)
+a = SAMME(Original_Data, Tag,[False])
 
 a.train(5)
 
