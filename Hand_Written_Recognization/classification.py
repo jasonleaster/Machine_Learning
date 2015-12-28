@@ -10,11 +10,11 @@ from sklearn.ensemble       import AdaBoostClassifier
 from sklearn.tree           import DecisionTreeClassifier
 from initia_training_set    import ImageSet
 
-trainingset = ImageSet("./train-images.idx3-ubyte",
-                       "./train-labels.idx1-ubyte")
+trainingset = ImageSet("./data/train-images.idx3-ubyte",
+                       "./data/train-labels.idx1-ubyte")
 
-testset     = ImageSet("./t10k-images.idx3-ubyte",
-                       "./t10k-labels.idx1-ubyte")
+testset     = ImageSet("./data/t10k-images.idx3-ubyte",
+                       "./data/t10k-labels.idx1-ubyte")
 
 bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth = 6),
                         n_estimators = 500,
@@ -23,8 +23,8 @@ bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth = 6),
 trainingImgMat = [None for i in range(trainingset.SampleNum)]
 trainingLabel  = [trainingset.labels[i] for i in range(trainingset.SampleNum)]
 
-testImgMat = [None for i in range(testset.SampleNum)]
-testLabel  = [testset.labels[i] for i in range(testset.SampleNum)]
+testImgMat     = [None for i in range(testset.SampleNum)]
+testLabel      = [testset.labels[i] for i in range(testset.SampleNum)]
 
 
 for i in range(trainingset.SampleNum):

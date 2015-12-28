@@ -104,6 +104,8 @@ class Image:
         self.Col = Col
         self.name = "A Hand Written Image"
 
+        self.inteImg = self.haarfeature()
+
     def show(self):
         cv2.namedWindow(self.name)
         cv2.imshow(self.name, self.Img/255.)
@@ -111,4 +113,25 @@ class Image:
         cv2.destroyWindow(self.name)
 
     def haarfeature(self):
-        
+        image = self.Img
+        integratedImg = [ [0 for i in range(self.Col)]
+                             for j in range(self.Row)]
+
+        """
+        for i in range(self.Row):
+            for j in range(self.Col):
+                integratedImg[i][j] = integratedImg[i-1][j-1] + \
+                                      image[i-1][j  ] + \
+                                      image[i  ][j-1] + \
+                                      image[i  ][j  ]
+        """
+
+        for i in range(self.Row):
+            for j in range(self.Col):
+                integratedImg[i][j] = integratedImg[i  ][j-1] + \
+                                      integratedImg[i-1][j  ] - \
+                                      integratedImg[i-1][j-1] + \
+                                              image[i-1][j-1]
+
+
+
