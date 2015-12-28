@@ -17,10 +17,9 @@ import numpy
 from decisionTree import DecisionTree
 
 def toHashableVal(Vec):
-    val = 0.0
+    val = ""
     for i in range(len(Vec)):
-        val *= 10
-        val += Vec[i]
+        val += str(Vec[i])
 
     return val
 
@@ -72,7 +71,7 @@ class SAMME:
 
         self.probability = {}
 
-    def train(self, M = 100):
+    def train(self, M = 100000):
 	"""
 	function @train() is the main process which run 
 	AdaBoost algorithm.
@@ -84,10 +83,10 @@ class SAMME:
         K = self.NumClass * 1.0
         factor = ((K-1)**2)/K
 
-        for m in range(M):
+        for m in range(M-1):
             self.H[m] = self.Weaker(self._Mat, self._Label, 
                                     Discrete = self.Discrete, 
-                                    Depth = 2, W = self.W)
+                                    Depth = 1, W = self.W)
 
             self.H[m].train()
 
@@ -95,14 +94,17 @@ class SAMME:
 
             proba = self.H[m].proba
 
+            log_proba = {}
+
             # calculate log(proba).
             for i in range(self.SamplesNum):
                 val = toHashableVal(self._Mat[:, i])
+                log_proba[val] = {}
                 for label in self.labels:
                     if proba[val][label] < 1e-20:
-                        proba[val][label] = numpy.log(1e-20)
+                        log_proba[val][label] = numpy.log(1e-20)
                     else:
-                        proba[val][label] = numpy.log(proba[val][label])
+                        log_proba[val][label] = numpy.log(proba[val][label])
 
             self.probability[m] = {}
 
@@ -113,11 +115,11 @@ class SAMME:
 
                 summer = 0.0
                 for label in self.labels:
-                    summer += proba[val][label]
+                    summer += log_proba[val][label]
 
                 for label in self.labels:
                     self.probability[m][val][label] = \
-                          (K - 1) * (proba[val][label] - summer)
+                          (K - 1) * (log_proba[val][label] - summer)
 
             # update weight
             for i in range(self.SamplesNum):
@@ -126,7 +128,7 @@ class SAMME:
                 # Y[i] * log(p[x[i]])
                 summer = 0.0
                 for label in self.labels:
-                    summer += self.ExpOut[val][label] * proba[val][label]
+                    summer += self.ExpOut[i][label] * log_proba[val][label]
 
                 if self._Label[i] == output[i]:
                     # classified correctly
@@ -135,7 +137,7 @@ class SAMME:
                     #misclassified
                     self.W[val] *= numpy.exp((-1.*(K-1)/K) * summer * (-1))
             if self.is_good_enough():
-                print "It's good enough with ", self.N, "weak classifier"
+                print "It's good enough with ", self.N + 1, "weak classifier"
                 break
 
             self.N += 1

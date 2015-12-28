@@ -48,5 +48,5 @@ a = SAMME(Original_Data, Tag, Discrete = discrete)
 
 a.train()
 
-a.prediction(a._Mat)
+print a.prediction(a._Mat)
 

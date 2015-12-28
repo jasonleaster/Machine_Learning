@@ -42,10 +42,9 @@ def pGini(labels):
     return 1 - summer
 
 def toHashableVal(Vec):
-    val = 0.0
+    val = ""
     for i in range(len(Vec)):
-        val *= 10
-        val += Vec[i]
+        val += str(Vec[i]) 
 
     return val
 
@@ -151,13 +150,8 @@ class DecisionTree:
                     t.counter[label] = 1.0
             return t
 
+        minium = + numpy.inf
         for f in range(self.SamplesDem):
-            if self.Discrete[f] == True:
-                print "ERROR DEBUGGING !"
-                vals = self.feature_dict[f]
-            else:
-                vals = Mat[f, :]
-
             for i in range(len(Tag)):
                 v = Mat[f, i]
                 p = self.Gini(Mat[f], Tag, v, f)
@@ -226,10 +220,17 @@ class DecisionTree:
         for i in range(Num):
             node = self.DT
             while node.isLeaf != True:
-                if Mat[node.selFeature, i] >= node.nodeVal:
-                    node = node.right
+                if self.Discrete[node.selFeature] == False:
+                    if Mat[node.selFeature, i] >= node.nodeVal:
+                        node = node.right
+                    else:
+                        node = node.left
                 else:
-                    node = node.left
+                    if Mat[node.selFeature, i] != node.nodeVal:
+                        node = node.right
+                    else:
+                        node = node.left
+
 
             val = toHashableVal(Mat[:, i])
             proba[val] = {}
