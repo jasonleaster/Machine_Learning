@@ -13,6 +13,7 @@ Thanks Wei Chen. Without him, I can't understand AdaBoost in this short time. We
 """
 import numpy
 from decisionStump import *
+import matplotlib.pyplot as pyplot
 
 class AdaBoost:
 
@@ -43,6 +44,8 @@ class AdaBoost:
         self.G = {}
         self.alpha = {}
 
+        self.accuracy = []
+
     def is_good_enough(self):
         output = numpy.zeros((self.SamplesNum, 1))
         for i in range(self.N+1):
@@ -50,6 +53,9 @@ class AdaBoost:
 
         output = numpy.sign(output)
         output = output.flatten()
+
+        e = numpy.count_nonzero(output ==self._Tag)/(self.SamplesNum*1.) 
+        self.accuracy.append( e )
 
         if output.tolist() == self._Tag.tolist():
             return True
@@ -92,6 +98,10 @@ class AdaBoost:
 
             self.N += 1
 
+            if self.accuracy[self.N-1] > 0.97 and self.N > 50:
+                self.showErrRates()
+                return
+
     def prediction(self, Mat):
 
         Mat = numpy.array(Mat)
@@ -103,3 +113,11 @@ class AdaBoost:
         output = numpy.sign(output)
 
         return output
+
+    def showErrRates(self):
+        pyplot.title("The changes of accuracy (Figure by Jason Leaster)")
+        pyplot.xlabel("Iteration times")
+        pyplot.ylabel("Accuracy of Prediction")
+        pyplot.plot([i for i in range(self.N)], self.accuracy, '-.', label = "Accuracy * 100%")
+
+        pyplot.show()
