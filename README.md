@@ -1,6 +1,8 @@
-# Machine_Learning
+## Machine Learning
 
-My Practice about Machine Learning
+My Practice about Machine Learning. The aim that I create this project is to understand algorithm in machine learning better. But not only play with mathmatic equations.
+
+> Tell me and I forget, teach me and I may remember, involve me and I learn. -- Benjamin Franklin
 
 Algorithms which I have implemented:
 
@@ -29,3 +31,13 @@ If you find any thing wrong with my program, you are welcome to touch me by e-ma
 Thank you :)
 
 Yours, EOF
+
+----
+
+## Stype Of Implementation:
+
+    All training samples are intialized as `self._Mat` which is organized like a matrix. `self._Mat[i][j]` means that the i-th feature value of the j-th sample in the training set. In the same way. If this model is supervised, there will be a data member `self._Label` or `self._Tag` in that class. `self.[i]` is the label of training sample `self._Mat[:, i]`
+
+    Object oriented programming is used to this implementation. It's convenient to help people to test these implementation and easy to understand.
+
+    If my style is not well, tell me your suggestion. I will be glad to accept it and refactor my implementation.
