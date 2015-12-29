@@ -60,16 +60,40 @@ class KMeans:
                 for i in range(self.SampleNum):
                     if self.classification[i][0] == k and\
                        self.classification[i][1] < minDis:
-                        minDis = self.classification[i][1]
+                        minDis    = self.classification[i][1]
                         opt_point = self._Mat[:, i]
 
                 self.meanVal[k] = opt_point
 
+            if stopOrNot(self):
+                return
 
-            """
-            Unfinished. updating.
-            Aha. :) 
-            I am thinking how to make it stop.
-            """
-
+    def minDisInClass(self, k):
     
+        assert k >= 0
+
+        dis = []
+        for i in range(self.SampleNum):
+            if self.classification[i][0] == k:
+                summer = 0.
+                for j in range(self.SampleNum):
+                    if self.classification[j][0] = k:
+                        summer += self.distance(self._Mat[:, i], self._Mat[:, j])
+
+                dis.append(summer)
+
+        return min(dis)
+
+    def stopOrNot(self):
+        for k in range(self.classNum):
+            summer = 0.
+            for i in range(self.SampleNum):
+                if self.classification[i][0] == k:
+                    summer += self.distance(self.meanVal(k), self._Mat[:, i])
+    
+            if summer >= self.minDisInClass(k):
+                return False
+
+
+        return True
+

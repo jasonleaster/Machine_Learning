@@ -36,8 +36,8 @@ Yours, EOF
 
 ## Stype Of Implementation:
 
-    All training samples are intialized as `self._Mat` which is organized like a matrix. `self._Mat[i][j]` means that the i-th feature value of the j-th sample in the training set. In the same way. If this model is supervised, there will be a data member `self._Label` or `self._Tag` in that class. `self.[i]` is the label of training sample `self._Mat[:, i]`
+All training samples are intialized as `self._Mat` which is organized like a matrix. `self._Mat[i][j]` means that the i-th feature value of the j-th sample in the training set. In the same way. If this model is supervised, there will be a data member `self._Label` or `self._Tag` in that class. `self.[i]` is the label of training sample `self._Mat[:, i]`
 
-    Object oriented programming is used to this implementation. It's convenient to help people to test these implementation and easy to understand.
+Object oriented programming is used to this implementation. It's convenient to help people to test these implementation and easy to understand.
 
-    If my style is not well, tell me your suggestion. I will be glad to accept it and refactor my implementation.
+If my style is not well, tell me your suggestion. I will be glad to accept it and refactor my implementation.

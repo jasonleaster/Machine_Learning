@@ -1,12 +1,32 @@
 """
 Programmer  :   EOF
-File        :   read_training_image.py
+File        :   initia_training_set.py
 Date        :   2015.12.16
 E-mail      :   jasonleaster@163.com
 """
 
 import numpy
 import cv2
+
+BLACK = 0
+WHITE = 255
+WinSize = 24
+HF1 = [ [BLACK for i in range(WinSize)]
+               for j in range(WinSize)]
+
+for i in range(WinSize/2, WinSize):
+    for j in range(WinSize):
+        HF1[i][j] = WHITE
+
+HF2 = [ [BLACK for i in range(WinSize)]
+               for j in range(WinSize)]
+
+for i in range(WinSize):
+    for j in range(WinSize/2, WinSize):
+        HF2[i][j] = WHITE
+
+
+HaarFeatureSet = [HF1, HF2]
 
 def str2int(string, length):
     summer = 0
