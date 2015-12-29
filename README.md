@@ -21,7 +21,7 @@ You can test these implementation with the corresponding test file which I name 
 You could calculate the accuracy of this algorithm like what I have done.
 The picture below there is the accuracy of AdaBoost with test file `tester6.py`
 
-[images](https://github.com/jasonleaster/Machine_Learning/blob/master/accuracy.png)
+![images](https://github.com/jasonleaster/Machine_Learning/blob/master/accuracy.png)
 
 
 If you find any thing wrong with my program, you are welcome to touch me by e-mail: jasonleaster@163.com
