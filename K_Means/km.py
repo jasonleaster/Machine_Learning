@@ -5,11 +5,13 @@ Date        :   2015.12.29
 E-mail      :   jasonleaster@163.com
 
 Description :
+    The implementation of K-Means Model.
+
 """
 
 import numpy
 from numpy.random import uniform as rand
-
+from matplotlib import pyplot
 
 def euclidean_distance(list1, list2):
     assert isinstance(list1, list)
@@ -31,7 +33,9 @@ class KMeans:
         self.classNum  = K
         self.distance  = disFunc
 
-        self.scope     = [[min(self._Mat[i, :]), max(self._Mat[i, :])] for i in range(self.SampleDem)]
+        self.scope     = [[min(self._Mat[i, :]), 
+                           max(self._Mat[i, :])] 
+                           for i in range(self.SampleDem)]
         """
         Initialization of @meanVals in randomly in the scope.
         """
@@ -39,61 +43,82 @@ class KMeans:
                             for i in range(self.SampleDem)] 
                             for j in range(self.classNum)]).transpose()
 
-        self.classification = [(None, None) for i in range(self.SampleNum)]
+        self.classification = [[None, None] for i in range(self.SampleNum)]
+
+        for i in range(self.SampleNum):
+            minDis = +numpy.inf
+            label  = None
+            for k in range(self.classNum):
+                d = self.distance(self._Mat[:, i].tolist(), self.meanVal[:, k].tolist())
+
+                if d < minDis:
+                    minDis = d
+                    label  = k
+
+            self.classification[i][0] = label
+            self.classification[i][1] = minDis
 
     def train(self):
         while True:
-            for i in range(self.SampleNum):
-                minDis = +numpy.inf
-                label  = None
-                for k in range(self.K):
-                    d = self.distance(self._Mat[:, i], selsf.meanVal[:, k])
-                    if d < minDis:
-                        minDis = d
-                        label  = k
-                self.classification[i][0] = label
-                self.classification[i][1] = minDis
+
+            if self.stopOrNot():
+                return
 
             for k in range(self.classNum):
-                opt_point = None
-                minDis = +numpy.inf
-                for i in range(self.SampleNum):
-                    if self.classification[i][0] == k and\
-                       self.classification[i][1] < minDis:
-                        minDis    = self.classification[i][1]
-                        opt_point = self._Mat[:, i]
+                (minDis, self.meanVal[:, k]) = self.minDisInClass(k)
 
-                self.meanVal[k] = opt_point
-
-            if stopOrNot(self):
-                return
 
     def minDisInClass(self, k):
     
         assert k >= 0
 
-        dis = []
+        minDis = +numpy.inf
         for i in range(self.SampleNum):
             if self.classification[i][0] == k:
                 summer = 0.
                 for j in range(self.SampleNum):
-                    if self.classification[j][0] = k:
-                        summer += self.distance(self._Mat[:, i], self._Mat[:, j])
+                    if self.classification[j][0] == k:
+                        summer += self.distance(self._Mat[:, i].tolist(), 
+                                                self._Mat[:, j].tolist())
 
-                dis.append(summer)
+                if minDis > summer:
+                    minDis = summer
+                    opt_point = self._Mat[:, i]
 
-        return min(dis)
+        return (minDis, opt_point)
 
     def stopOrNot(self):
         for k in range(self.classNum):
             summer = 0.
             for i in range(self.SampleNum):
                 if self.classification[i][0] == k:
-                    summer += self.distance(self.meanVal(k), self._Mat[:, i])
+                    summer += self.distance(self.meanVal[:,k].tolist(), self._Mat[:, i].tolist())
     
-            if summer >= self.minDisInClass(k):
+            (minDis, _) = self.minDisInClass(k)
+            if summer > minDis:
                 return False
-
 
         return True
 
+    def show(self):
+        """
+        Only support two demention feature samples!
+        Just a toy function.
+        """
+        assert self.SampleDem == 2
+
+        print "Means: ", self.meanVal
+        width = 2
+
+        for k in range(self.classNum):
+            for i in range(self.SampleNum):
+                if self.classification[i][0] == 0:
+                    pyplot.plot(self._Mat[0][i], self._Mat[1][i], "or")
+                elif self.classification[i][0] == 1:
+                    pyplot.plot(self._Mat[0][i], self._Mat[1][i], "og")
+                elif self.classification[i][0] == 2:
+                    pyplot.plot(self._Mat[0][i], self._Mat[1][i], "ob")
+
+        pyplot.axis([int(self.scope[0][0]) - width, int(self.scope[0][1]) + width, 
+                    int(self.scope[1][0]) - width, int(self.scope[1][1]) + width])
+        pyplot.show()

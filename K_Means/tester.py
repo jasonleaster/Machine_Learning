@@ -28,3 +28,5 @@ Original_Data = numpy.array([
 a = KMeans(Original_Data, K = 3)
 
 a.train()
+
+a.show()
