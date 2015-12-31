@@ -9,6 +9,7 @@ Algorithms which I have implemented:
 * Percetron
 * K Nearest Neighbor
 * Decision Tree
+* K Means
 * Naive Bayesian
 * AdaBoost (Adaptive Boosting, Real Number Version.)
 * Boosting Tree
@@ -34,7 +35,7 @@ Yours, EOF
 
 ----
 
-## Stype Of Implementation:
+## Style Of Implementation:
 
 All training samples are intialized as `self._Mat` which is organized like a matrix. `self._Mat[i][j]` means that the i-th feature value of the j-th sample in the training set. In the same way. If this model is supervised, there will be a data member `self._Label` or `self._Tag` in that class. `self.[i]` is the label of training sample `self._Mat[:, i]`
 
