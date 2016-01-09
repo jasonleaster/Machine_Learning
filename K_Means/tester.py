@@ -8,6 +8,7 @@ Description :
 
 """
 import numpy
+from matplotlib import pyplot
 from km import KMeans
 
 Original_Data = numpy.array([
@@ -25,7 +26,16 @@ Original_Data = numpy.array([
     [6, 7]
     ]).transpose()
 
+
 a = KMeans(Original_Data, K = 3)
+
+for i in range(a.SampleNum):
+    pyplot.plot(Original_Data[0][i], Original_Data[1][i], "+r", markersize=12)
+
+
+pyplot.title("Original Training Data (Figure by Jason Leaster)")
+pyplot.axis([-2, 10, -2, 10])
+pyplot.show()
 
 a.train()
 

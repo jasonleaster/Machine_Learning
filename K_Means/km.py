@@ -32,7 +32,8 @@ class KMeans:
 
         self.classNum  = K
         self.distance  = disFunc
-
+        
+        # The boundary of training samples
         self.scope     = [[min(self._Mat[i, :]), 
                            max(self._Mat[i, :])] 
                            for i in range(self.SampleDem)]
@@ -43,8 +44,19 @@ class KMeans:
                             for i in range(self.SampleDem)] 
                             for j in range(self.classNum)]).transpose()
 
+        """
+        The result after classification.
+        classification[i][0] is the label of sample `i`.
+        classification[i][1] is the distance between sample `i` and 
+        the mean point of that class.
+
+        """
         self.classification = [[None, None] for i in range(self.SampleNum)]
 
+        self.classify()
+
+
+    def classify(self):
         for i in range(self.SampleNum):
             minDis = +numpy.inf
             label  = None
@@ -58,16 +70,37 @@ class KMeans:
             self.classification[i][0] = label
             self.classification[i][1] = minDis
 
+    """
+    After you initialized this class, just call this
+    function and K Means Model will be built
+    """
     def train(self):
         while True:
 
             if self.stopOrNot():
                 return
 
+            self.classify()
+
             for k in range(self.classNum):
-                (minDis, self.meanVal[:, k]) = self.minDisInClass(k)
+                mean    = None
+                counter = 0
+                for i in range(self.SampleNum):
+                    if self.classification[i][0] == k:
+                        if mean == None:
+                            mean =  numpy.array(self._Mat[:, i])*1.
+                        else:
+                            mean += self._Mat[:, i]
 
+                        counter += 1.
 
+                mean /= counter
+
+                self.meanVal[:, k] = mean
+
+    """
+    Get the minimum inner distance of class `k`
+    """
     def minDisInClass(self, k):
     
         assert k >= 0
@@ -87,38 +120,57 @@ class KMeans:
 
         return (minDis, opt_point)
 
+    """
+    This function *may* update @self.meanVal and will check
+    whether to stop the training process.
+
+    Return True, if it should be stoped. Otherwise, return False
+    """
     def stopOrNot(self):
+        STOP = True
+
         for k in range(self.classNum):
             summer = 0.
             for i in range(self.SampleNum):
                 if self.classification[i][0] == k:
                     summer += self.distance(self.meanVal[:,k].tolist(), self._Mat[:, i].tolist())
     
-            (minDis, _) = self.minDisInClass(k)
+            (minDis, new_mean_point) = self.minDisInClass(k)
             if summer > minDis:
-                return False
+                self.meanVal[:, k] = new_mean_point
+                STOP = False
+                continue
 
-        return True
+        if STOP == True:
+            return True
+        else:
+            return False
 
     def show(self):
         """
         Only support two demention feature samples!
-        Just a toy function.
+        Just a toy function. 
+        If the feature is more than 2-dementionm, please
+        don't call this function in user program.
         """
         assert self.SampleDem == 2
 
-        print "Means: ", self.meanVal
+        print "Means: "
+        print self.meanVal
+
         width = 2
 
         for k in range(self.classNum):
             for i in range(self.SampleNum):
                 if self.classification[i][0] == 0:
-                    pyplot.plot(self._Mat[0][i], self._Mat[1][i], "or")
+                    pyplot.plot(self._Mat[0][i], self._Mat[1][i], "or", markersize = 10)
                 elif self.classification[i][0] == 1:
-                    pyplot.plot(self._Mat[0][i], self._Mat[1][i], "og")
+                    pyplot.plot(self._Mat[0][i], self._Mat[1][i], "og", markersize = 10)
                 elif self.classification[i][0] == 2:
-                    pyplot.plot(self._Mat[0][i], self._Mat[1][i], "ob")
+                    pyplot.plot(self._Mat[0][i], self._Mat[1][i], "ob", markersize = 10)
 
         pyplot.axis([int(self.scope[0][0]) - width, int(self.scope[0][1]) + width, 
                     int(self.scope[1][0]) - width, int(self.scope[1][1]) + width])
+
+        pyplot.title("The OutPut (figure by Jason Leaster)")
         pyplot.show()

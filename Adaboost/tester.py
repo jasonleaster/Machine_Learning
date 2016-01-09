@@ -98,6 +98,7 @@ for i in range(len(Tag)):
 
 
 
+
 a = AdaBoost(Original_Data, Tag)
 
 a.train(100)
@@ -114,6 +115,5 @@ for i in range(len(output)):
     else:
         pyplot.plot(TestCase[0][i], TestCase[1][i], \
                     'ob', markersize = 20)
-
 
 pyplot.show()

@@ -49,6 +49,7 @@ a = BoostingTree(Original_Data, ExpVal)
 a.train(100)
 
 Unknow = numpy.array([
+[12],
 [11],
 [1]
 ]).transpose()

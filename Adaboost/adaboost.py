@@ -77,11 +77,11 @@ class AdaBoost:
             self.G[m] = self.Weaker(self._Mat, self._Tag, self.W)
             self.G[m].train()
 
-            output = self.G[m].prediction(self._Mat)
-
             errorRate = self.G[m].opt_errorRate
 
             self.alpha[m] = 0.5 * numpy.log((1-errorRate)/errorRate)
+
+            output = self.G[m].prediction(self._Mat)
             
             if self.is_good_enough():
                 print (self.N + 1) ," weak classifier is enough to ",\
@@ -98,7 +98,7 @@ class AdaBoost:
 
             self.N += 1
 
-            if self.accuracy[self.N-1] > 0.97 and self.N > 50:
+            if self.accuracy[self.N-1] > 0.97 or self.N > 100:
                 self.showErrRates()
                 return
 
@@ -109,7 +109,7 @@ class AdaBoost:
         for i in range(self.N + 1):
             output += self.G[i].prediction(Mat) * self.alpha[i]
 
-        print output
+        #print output
         output = numpy.sign(output)
 
         return output
