@@ -177,15 +177,18 @@ class Image:
         pyplot.show()
 
 class ImageSet:
-    def __init__(self, imgDir = None, label = None):
+    def __init__(self, imgDir = None, label = None, sampleNum = None):
 
         assert isinstance(imgDir, str)
 
         self.fileList = os.listdir(imgDir)
         self.fileList.sort()
 
-        #self.sampleNum = len(self.fileList)
-        self.sampleNum = 500
+        if sampleNum == None:
+            self.sampleNum = len(self.fileList)
+        else:
+            self.sampleNum = sampleNum
+
         self.setLabel  = label
 
         self.images = [None for i in range(self.sampleNum)]

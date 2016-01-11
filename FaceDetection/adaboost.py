@@ -13,6 +13,7 @@ Thanks Wei Chen. Without him, I can't understand AdaBoost in this short time. We
 """
 import numpy
 from decisionStump import *
+from config import *
 import matplotlib.pyplot as pyplot
 
 class AdaBoost:
@@ -38,7 +39,10 @@ class AdaBoost:
 
 
             # Initialization of weight
-            self.W = [1.0/self.SamplesNum for i in range(self.SamplesNum)]
+            pos_W = [1.0/(2 * POSITIVE_SAMPLE) for i in range(POSITIVE_SAMPLE)]
+
+            neg_W = [1.0/(2 * NEGATIVE_SAMPLE) for i in range(NEGATIVE_SAMPLE)]
+            self.W = pos_W + neg_W
 
             self.accuracy = []
 
@@ -47,18 +51,16 @@ class AdaBoost:
         self.G = {}
         self.alpha = {}
         self.N = 0
+        self.detectionRate = 0.
 
 
     def is_good_enough(self):
-        output = numpy.array([ 0. for i in range(self.SamplesNum)])
-        for i in range(self.N+1):
-            output += self.G[i].prediction(self._Mat) * self.alpha[i]
-
-        output = numpy.sign(output)
-        output = output.flatten()
+        output = self.prediction(self._Mat)
 
         e = numpy.count_nonzero(output ==self._Tag)/(self.SamplesNum*1.) 
         self.accuracy.append( e )
+
+        self.detectionRate = numpy.count_nonzero(output[0:POSITIVE_SAMPLE] == 1) * 1./ POSITIVE_SAMPLE
 
         if output.tolist() == self._Tag.tolist():
             return True
@@ -101,7 +103,11 @@ class AdaBoost:
 
             self.N += 1
 
-            if self.accuracy[self.N-1] > 0.85 or self.N > 100:
+            print "errorRate:", errorRate
+            print "Accuracy:", self.accuracy[-1]
+            print "DetectionRate:", self.detectionRate
+
+            if self.accuracy[self.N-1] > 0.90 or self.detectionRate > 0.99:
                 self.showErrRates()
                 return
 
@@ -116,7 +122,11 @@ class AdaBoost:
         for i in range(self.N):
             output += self.G[i].prediction(Mat) * self.alpha[i]
 
-        output = numpy.sign(output)
+        for i in range(len(output)):
+            if output[i] > 0.:
+                output[i] = +1
+            else:
+                output[i] = -1
 
         return output
 

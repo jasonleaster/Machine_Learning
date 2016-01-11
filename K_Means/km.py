@@ -37,12 +37,6 @@ class KMeans:
         self.scope     = [[min(self._Mat[i, :]), 
                            max(self._Mat[i, :])] 
                            for i in range(self.SampleDem)]
-        """
-        Initialization of @meanVals in randomly in the scope.
-        """
-        self.meanVal   = numpy.array([[rand(self.scope[i][0], self.scope[i][1])
-                            for i in range(self.SampleDem)] 
-                            for j in range(self.classNum)]).transpose()
 
         """
         The result after classification.
@@ -53,7 +47,28 @@ class KMeans:
         """
         self.classification = [[None, None] for i in range(self.SampleNum)]
 
-        self.classify()
+        """
+        Initialization of @meanVals in randomly in the scope.
+        """
+        self.__initMeanVal__()
+
+
+    def __initMeanVal__(self):
+
+        while True:
+            self.meanVal   = numpy.array([[rand(self.scope[i][0], self.scope[i][1])
+                                for i in range(self.SampleDem)] 
+                                for j in range(self.classNum)]).transpose()
+
+            self.classify()
+
+            classSet = set()
+
+            for i in range(self.SampleNum):
+                classSet.add(self.classification[i][0])
+
+            if len(classSet) == self.classNum:
+                break
 
 
     def classify(self):
@@ -80,8 +95,6 @@ class KMeans:
             if self.stopOrNot():
                 return
 
-            self.classify()
-
             for k in range(self.classNum):
                 mean    = None
                 counter = 0
@@ -97,6 +110,8 @@ class KMeans:
                 mean /= counter
 
                 self.meanVal[:, k] = mean
+
+            self.classify()
 
     """
     Get the minimum inner distance of class `k`
@@ -144,7 +159,14 @@ class KMeans:
         if STOP == True:
             return True
         else:
-            return False
+            self.classify()
+
+            if self.stopOrNot() == True:
+                return True
+            else:
+                return False
+
+        return False
 
     def show(self):
         """
@@ -154,6 +176,7 @@ class KMeans:
         don't call this function in user program.
         """
         assert self.SampleDem == 2
+        assert self.classNum <= 8
 
         print "Means: "
         print self.meanVal
@@ -168,8 +191,18 @@ class KMeans:
                     pyplot.plot(self._Mat[0][i], self._Mat[1][i], "og", markersize = 10)
                 elif self.classification[i][0] == 2:
                     pyplot.plot(self._Mat[0][i], self._Mat[1][i], "ob", markersize = 10)
+                elif self.classification[i][0] == 3:
+                    pyplot.plot(self._Mat[0][i], self._Mat[1][i], "oc", markersize = 10)
+                elif self.classification[i][0] == 4:
+                    pyplot.plot(self._Mat[0][i], self._Mat[1][i], "om", markersize = 10)
+                elif self.classification[i][0] == 5:
+                    pyplot.plot(self._Mat[0][i], self._Mat[1][i], "oy", markersize = 10)
+                elif self.classification[i][0] == 6:
+                    pyplot.plot(self._Mat[0][i], self._Mat[1][i], "ok", markersize = 10)
+                elif self.classification[i][0] == 7:
+                    pyplot.plot(self._Mat[0][i], self._Mat[1][i], "ow", markersize = 10)
 
-        pyplot.axis([int(self.scope[0][0]) - width, int(self.scope[0][1]) + width, 
+        pyplot.axis([int(self.scope[0][0]) - 2*width, int(self.scope[0][1]) + 2*width, 
                     int(self.scope[1][0]) - width, int(self.scope[1][1]) + width])
 
         pyplot.title("The OutPut (figure by Jason Leaster)")

@@ -20,8 +20,8 @@ fileObj = open(FEATURE_FILE_TRAINING, "a+")
 if os.stat(FEATURE_FILE_TRAINING).st_size == 0:
 
     print "First time to load the training set ..."
-    TrainingSetFace      = ImageSet(TRAINING_FACE)
-    TrainingSetNonFace   = ImageSet(TRAINING_NONFACE)
+    TrainingSetFace      = ImageSet(TRAINING_FACE, sampleNum = POSITIVE_SAMPLE)
+    TrainingSetNonFace   = ImageSet(TRAINING_NONFACE, sampleNum = NEGATIVE_SAMPLE)
 
     Original_Data_Face = [
         [sum(TrainingSetFace.images[i].haarA),
@@ -80,7 +80,7 @@ Label = numpy.array(Label_Face + Label_NonFace)
 
 a = AdaBoost(Original_Data, Label)
 
-a.train(500)
+a.train(5000)
 
 fileObj = open(ADABOOST_FILE, "a+")
 

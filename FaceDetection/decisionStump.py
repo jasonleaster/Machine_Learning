@@ -5,6 +5,7 @@ File        :   weakclassifier.py
 
 """
 import numpy
+from config import *
 
 def sortByDem(Mat, d):
     assert isinstance(Mat, numpy.array)
@@ -109,10 +110,29 @@ class DecisionStump:
 
             output[self._Mat[d, :] * label < t * label] = -1
 
+            S_plus = 0.
+            S_nega = 0.
+
+            for i in range(self.SampleNum):
+                if self._Mat[d, i] < t:
+                    if self._Tag[i] == 1:
+                        S_plus += self.weight[i]
+                    else:
+                        S_nega += self.weight[i]
+
+                else:
+                    break
+
+            errorRate = min(S_plus + (0.5 - S_nega), S_nega + (0.5 - S_plus))
+            if errorRate < 0:
+                print  "ERROR!!!"
+
+            """
             errorRate = 0.0
             for index in range(self.SampleNum):
                 if output[index] != self._Tag[index]:
                     errorRate += self.weight[index]
+            """
 
             if errorRate < minErr:
                 minErr = errorRate
