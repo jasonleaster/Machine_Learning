@@ -109,7 +109,7 @@ class DecisionStump:
             output = numpy.ones((self.SampleNum, 1))
 
             output[self._Mat[d, :] * label < t * label] = -1
-
+            """
             S_plus = 0.
             S_nega = 0.
 
@@ -132,7 +132,6 @@ class DecisionStump:
             for index in range(self.SampleNum):
                 if output[index] != self._Tag[index]:
                     errorRate += self.weight[index]
-            """
 
             if errorRate < minErr:
                 minErr = errorRate

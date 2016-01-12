@@ -20,8 +20,8 @@ fileObj = open(FEATURE_FILE_TESTING, "a+")
 if os.stat(FEATURE_FILE_TESTING).st_size == 0:
 
     print "First time to load the testing set ..."
-    TestSetFace          = ImageSet(TEST_FACE)
-    TestSetNonFace       = ImageSet(TEST_NONFACE)
+    TestSetFace          = ImageSet(TEST_FACE, sampleNum = TEST_SAMPLE)
+    TestSetNonFace       = ImageSet(TEST_NONFACE, sampleNum = TEST_SAMPLE)
 
     Original_Data_Face = [
         [sum(TestSetFace.images[i].haarA),
@@ -97,6 +97,6 @@ fileObj.close()
 
 output = a.prediction(Original_Data)
 
-print numpy.count_nonzero(output[0:50] > 0)/ 50.
+print numpy.count_nonzero(output[0:TEST_SAMPLE] > 0) * 1./ TEST_SAMPLE
 
-print numpy.count_nonzero(output[50:100] < 0)/ 50.
+print numpy.count_nonzero(output[TEST_SAMPLE:TEST_SAMPLE*2] < 0) * 1./ TEST_SAMPLE

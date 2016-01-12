@@ -24,10 +24,10 @@ if os.stat(FEATURE_FILE_TRAINING).st_size == 0:
     TrainingSetNonFace   = ImageSet(TRAINING_NONFACE, sampleNum = NEGATIVE_SAMPLE)
 
     Original_Data_Face = [
-        [sum(TrainingSetFace.images[i].haarA),
-         sum(TrainingSetFace.images[i].haarB),
-         sum(TrainingSetFace.images[i].haarC),
-         sum(TrainingSetFace.images[i].haarD)]
+        [TrainingSetFace.images[i].haarA,
+         TrainingSetFace.images[i].haarB,
+         TrainingSetFace.images[i].haarC,
+         TrainingSetFace.images[i].haarD]
         for i in range(TrainingSetFace.sampleNum)
         ]
 

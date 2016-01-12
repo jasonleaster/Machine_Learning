@@ -107,7 +107,7 @@ class AdaBoost:
             print "Accuracy:", self.accuracy[-1]
             print "DetectionRate:", self.detectionRate
 
-            if self.accuracy[self.N-1] > 0.90 or self.detectionRate > 0.99:
+            if self.accuracy[self.N-1] > 0.91:
                 self.showErrRates()
                 return
 
