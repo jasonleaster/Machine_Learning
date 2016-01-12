@@ -24,7 +24,7 @@ if os.stat(FEATURE_FILE_TRAINING).st_size == 0:
     TrainingSetNonFace   = ImageSet(TRAINING_NONFACE, sampleNum = NEGATIVE_SAMPLE)
 
     Original_Data_Face = [
-         sum(TrainingSetFace.images[i].haarA + 
+         TrainingSetFace.images[i].haarA + 
          TrainingSetFace.images[i].haarB + 
          TrainingSetFace.images[i].haarC +
          TrainingSetFace.images[i].haarD
@@ -32,17 +32,15 @@ if os.stat(FEATURE_FILE_TRAINING).st_size == 0:
         ]
 
     Original_Data_NonFace =[ 
-        [sum(TrainingSetNonFace.images[i].haarA),
-         sum(TrainingSetNonFace.images[i].haarB),
-         sum(TrainingSetNonFace.images[i].haarC),
-         sum(TrainingSetNonFace.images[i].haarD)]
+        [TrainingSetNonFace.images[i].haarA +
+         TrainingSetNonFace.images[i].haarB +
+         TrainingSetNonFace.images[i].haarC +
+         TrainingSetNonFace.images[i].haarD]
         for i in range(TrainingSetNonFace.sampleNum)
         ]
 
     Original_Data = numpy.array(Original_Data_Face + \
-                        Original_Data_NonFace).transpose()
-
-    assert Original_Data.shape[0] == FEATURE_TYPE_NUM
+                        Original_Data_NonFace)
 
     for i in range(Original_Data.shape[0]):
         for j in range(Original_Data.shape[1]):
@@ -56,9 +54,9 @@ else:
     tmp = fileObj.readlines()
 
     Original_Data = []
-    for i in range(0, len(tmp), FEATURE_TYPE_NUM):
+    for i in range(POSITIVE_SAMPLE + NEGATIVE_SAMPLE):
         haarGroup = []
-        for j in range(i, i + FEATURE_TYPE_NUM):
+        for j in range(i, i + FEATURE_NUM):
             haarGroup.append(float(tmp[j]))
 
         Original_Data.append(haarGroup)
