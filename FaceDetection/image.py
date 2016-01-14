@@ -11,14 +11,14 @@ user.
 
 """
 import numpy
-import cv2
 import os
 from matplotlib import pyplot
+from matplotlib import image
 
 class Image:
     def __init__(self, fileName = None, label = None):
         self.imgName = fileName
-        self.img     = cv2.imread(fileName, cv2.IMREAD_GRAYSCALE)
+        self.img     = image.imread(fileName)
         self.label   = label
 
         self.Row     = self.img.shape[0]
