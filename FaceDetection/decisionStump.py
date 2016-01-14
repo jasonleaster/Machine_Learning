@@ -115,13 +115,19 @@ class DecisionStump:
                 processing += 10.
 
             for label in self.labels:
-                err, th = self.optimal(demention, label, steps)
+                cost, th = self.optimal(demention, label, steps)
 
-                if err < self.opt_errorRate:
-                    self.opt_errorRate = err
+                if cost < self.opt_errorRate:
+                    self.opt_cost = cost
                     self.opt_demention = demention
                     self.opt_threshold = th
                     self.opt_label     = label
+
+        output = self.prediction(self._Mat)
+
+        errorRate = numpy.count_nonzero(output == self._Tag) * 1. / self.SampleNum
+
+        return errorRate
 
 
     def show(self, d):

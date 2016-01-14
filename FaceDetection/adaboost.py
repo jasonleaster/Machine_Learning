@@ -85,9 +85,8 @@ class AdaBoost:
 
         for m in range(M):
             self.G[m] = self.Weaker(self._Mat, self._Tag, self.W)
-            self.G[m].train(steps = self.SamplesNum)
-
-            errorRate = self.G[m].opt_errorRate
+            
+            errorRate = self.G[m].train(steps = self.SamplesNum)
 
             self.alpha[m] = numpy.log((1-errorRate)/errorRate)
 

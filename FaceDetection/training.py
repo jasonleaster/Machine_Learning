@@ -76,7 +76,7 @@ if os.stat(FEATURE_FILE_TRAINING).st_size == 0:
         for j in range(Original_Data.shape[1]):
             fileObj.write(str(Original_Data[i][j]) + "\n")
 
-    Original_Data = Original_Data[::150, :]
+    #Original_Data = Original_Data[::150, :]
 
     fileObj.flush()
 else:
@@ -87,12 +87,12 @@ else:
 
     Original_Data = []
     for i in range(FEATURE_NUM):
-        if i % 150 == 0:
-            haarGroup = []
-            for j in range(i * SAMPLE_NUM , (i+1) * SAMPLE_NUM):
-                haarGroup.append(float(tmp[j]))
+        #if i % 150 == 0:
+        haarGroup = []
+        for j in range(i * SAMPLE_NUM , (i+1) * SAMPLE_NUM):
+            haarGroup.append(float(tmp[j]))
 
-            Original_Data.append(haarGroup)
+        Original_Data.append(haarGroup)
 
     Original_Data = numpy.array(Original_Data)
 

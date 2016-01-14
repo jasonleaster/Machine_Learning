@@ -28,14 +28,14 @@ class Image:
 
         self.iimg    = self.__integrateImg()
 
-        self.haarA   = self.__calFeatures(feature = "A")
-        #self.haarA   = []
+        #self.haarA   = self.__calFeatures(feature = "A")
+        self.haarA   = []
         self.haarB   = self.__calFeatures(feature = "B")
         self.haarC   = self.__calFeatures(feature = "C")
-        #self.haarD   = []
-        #self.haarE   = []
-        self.haarD   = self.__calFeatures(feature = "D")
-        self.haarE   = self.__calFeatures(feature = "E")
+        self.haarD   = []
+        self.haarE   = []
+        #self.haarD   = self.__calFeatures(feature = "D")
+        #self.haarE   = self.__calFeatures(feature = "E")
 
     def __integrateImg(self):
         image = self.stdImg
