@@ -11,9 +11,10 @@ That is the short for "Adaptive Boosting".
 Thanks Wei Chen. Without him, I can't understand AdaBoost in this short time. We help each other and learn this algorithm.
 
 """
+from config import *
+
 import numpy
 from decisionStump import *
-from config import *
 import matplotlib.pyplot as pyplot
 
 class AdaBoost:
@@ -39,10 +40,13 @@ class AdaBoost:
 
 
             # Initialization of weight
+            """
             pos_W = [1.0/(2 * POSITIVE_SAMPLE) for i in range(POSITIVE_SAMPLE)]
 
             neg_W = [1.0/(2 * NEGATIVE_SAMPLE) for i in range(NEGATIVE_SAMPLE)]
             self.W = pos_W + neg_W
+            """
+            self.W = [1.0/self.SamplesNum for i in range(SAMPLE_NUM)]
 
             self.accuracy = []
 
@@ -55,9 +59,11 @@ class AdaBoost:
 
 
     def is_good_enough(self):
+        self.N += 1
+
         output = self.prediction(self._Mat)
 
-        e = numpy.count_nonzero(output ==self._Tag)/(self.SamplesNum*1.) 
+        e = numpy.count_nonzero(output == self._Tag)/(self.SamplesNum*1.) 
         self.accuracy.append( e )
 
         self.detectionRate = numpy.count_nonzero(output[0:POSITIVE_SAMPLE] == 1) * 1./ POSITIVE_SAMPLE
@@ -66,7 +72,6 @@ class AdaBoost:
             return True
         else:
             return False
-
 
     def train(self, M = 4):
 	"""
@@ -80,18 +85,19 @@ class AdaBoost:
 
         for m in range(M):
             self.G[m] = self.Weaker(self._Mat, self._Tag, self.W)
-            self.G[m].train()
+            self.G[m].train(steps = self.SamplesNum)
 
             errorRate = self.G[m].opt_errorRate
 
-            self.alpha[m] = 0.5 * numpy.log((1-errorRate)/errorRate)
+            self.alpha[m] = numpy.log((1-errorRate)/errorRate)
 
             output = self.G[m].prediction(self._Mat)
             
             if self.is_good_enough():
-                print (self.N + 1) ," weak classifier is enough to ",\
+                print (self.N) ," weak classifier is enough to ",\
                       "classify the inputed sample points"
                 print "Training Done :)"
+                self.showErrRates()
                 break
 
             Z = 0.0
@@ -101,13 +107,11 @@ class AdaBoost:
             for i in range(self.SamplesNum):
                 self.W[i] = (self.W[i] / Z) * numpy.exp(-self.alpha[m] * self._Tag[i] * output[i])
 
-            self.N += 1
-
             print "errorRate:", errorRate
             print "Accuracy:", self.accuracy[-1]
             print "DetectionRate:", self.detectionRate
 
-            if self.accuracy[self.N-1] > 0.90 or self.detectionRate > 0.99:
+            if self.accuracy[self.N-1] > 0.90 and self.detectionRate > 0.95:
                 self.showErrRates()
                 return
 
@@ -122,8 +126,9 @@ class AdaBoost:
         for i in range(self.N):
             output += self.G[i].prediction(Mat) * self.alpha[i]
 
+        sum_alpha = sum(self.alpha.values())
         for i in range(len(output)):
-            if output[i] > 0.:
+            if output[i] > 0:
                 output[i] = +1
             else:
                 output[i] = -1
@@ -137,6 +142,3 @@ class AdaBoost:
         pyplot.plot([i for i in range(self.N)], self.accuracy, '-.', label = "Accuracy * 100%")
 
         pyplot.show()
-
-    def constructor(self, alpha, weakers):
-        pass

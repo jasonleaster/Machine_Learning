@@ -6,7 +6,7 @@ E-mail      :   jasonleaster@163.com
 
 Description :
     This script file will initialize the image set
-and read all images in directory which is given by
+and read all images in the directory which is given by
 user.
 
 """
@@ -29,8 +29,11 @@ class Image:
         self.iimg    = self.__integrateImg()
 
         self.haarA   = self.__calFeatures(feature = "A")
+        #self.haarA   = []
         self.haarB   = self.__calFeatures(feature = "B")
         self.haarC   = self.__calFeatures(feature = "C")
+        #self.haarD   = []
+        #self.haarE   = []
         self.haarD   = self.__calFeatures(feature = "D")
         self.haarE   = self.__calFeatures(feature = "E")
 
@@ -201,33 +204,3 @@ class ImageSet:
                 print "Loading ", processed, "%"
 
         print "Loading  100 %\n"
-        # Haar Featrue Groups
-        self.haarFeatGroups = []
-        #self.featureNum = self.__countFeatures()
-
-    """
-    def __countFeatures(self, ImgSize):
-        Row, Col = ImgSize
-
-        s1, s2 = 0, 0
-        for j in range(2, Col + 1): s1 += j/2
-        for i in range(1, Row + 1): s2 += i/1
-
-        # For feature A and B
-        sumAB = s1 * s2 * 2
-
-        s1, s2 = 0, 0
-        for j in range(3, Col + 1): s1 += j/3
-        for i in range(1, Row + 1): s2 += i/1
-
-        # For feature C and D
-        sumCD = s1 * s2 * 2
-
-        s1, s2 = 0, 0
-        for j in range(2, Col + 1): s1 += j/2
-        for i in range(2, Row + 1): s2 += i/2
-
-        sumE = s1 * s2
-
-        return sumAB + sumCD + sumE
-    """
