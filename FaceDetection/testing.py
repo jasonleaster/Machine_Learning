@@ -14,28 +14,34 @@ import os
 from config import *
 from adaboost import AdaBoost
 
+#FEATURE_FILE_TESTING = FEATURE_FILE_TRAINING
+#
+#TESTING_SAMPLE_NUM = SAMPLE_NUM
+#TESTING_NEGATIVE_SAMPLE = NEGATIVE_SAMPLE
+#TESTING_POSITIVE_SAMPLE = POSITIVE_SAMPLE
+
 fileObj = open(FEATURE_FILE_TESTING, "a+")
 
 # if that is a empty file
 if os.stat(FEATURE_FILE_TESTING).st_size == 0:
 
     print "First time to load the testing set ..."
-    TestSetFace          = ImageSet(TEST_FACE, sampleNum = TEST_SAMPLE)
-    TestSetNonFace       = ImageSet(TEST_NONFACE, sampleNum = TEST_SAMPLE)
+    TestSetFace          = ImageSet(TEST_FACE, sampleNum = TESTING_POSITIVE_SAMPLE)
+    TestSetNonFace       = ImageSet(TEST_NONFACE, sampleNum = TESTING_NEGATIVE_SAMPLE)
 
     Original_Data_Face = [
-        [sum(TestSetFace.images[i].haarA),
-         sum(TestSetFace.images[i].haarB),
-         sum(TestSetFace.images[i].haarC),
-         sum(TestSetFace.images[i].haarD)]
+        TestSetFace.images[i].haarA +
+        TestSetFace.images[i].haarB +
+        TestSetFace.images[i].haarC +
+        TestSetFace.images[i].haarD
         for i in range(TestSetFace.sampleNum)
         ]
 
     Original_Data_NonFace =[ 
-        [sum(TestSetNonFace.images[i].haarA),
-         sum(TestSetNonFace.images[i].haarB),
-         sum(TestSetNonFace.images[i].haarC),
-         sum(TestSetNonFace.images[i].haarD)]
+         TestSetNonFace.images[i].haarA +
+         TestSetNonFace.images[i].haarB +
+         TestSetNonFace.images[i].haarC +
+         TestSetNonFace.images[i].haarD 
         for i in range(TestSetNonFace.sampleNum)
         ]
 
@@ -46,6 +52,8 @@ if os.stat(FEATURE_FILE_TESTING).st_size == 0:
         for j in range(Original_Data.shape[1]):
             fileObj.write(str(Original_Data[i][j]) + "\n")
 
+    Original_Data = Original_Data[::150, :]
+
     fileObj.flush()
 else:
     print "Haar features have been calculated."
@@ -54,23 +62,25 @@ else:
     tmp = fileObj.readlines()
 
     Original_Data = []
-    for i in range(0, len(tmp), FEATURE_TYPE_NUM):
-        haarGroup = []
-        for j in range(i, i + FEATURE_TYPE_NUM):
-            haarGroup.append(float(tmp[j]))
+    for i in range(FEATURE_NUM):
+        if i % 150 == 0:
+            haarGroup = []
+            for j in range(i * TESTING_SAMPLE_NUM, (i+1) * TESTING_SAMPLE_NUM):
+                haarGroup.append(float(tmp[j]))
 
-        Original_Data.append(haarGroup)
+            Original_Data.append(haarGroup)
 
-    Original_Data = numpy.array(Original_Data).transpose()
+    Original_Data = numpy.array(Original_Data)
 
 fileObj.close()
 
 fileObj = open(ADABOOST_FILE, "a+")
+
 print "Constructing AdaBoost from existed model data"
 
-a = AdaBoost(train = False)
-
 tmp = fileObj.readlines()
+
+a = AdaBoost(train = False)
 
 for i in range(0, len(tmp), 4):
 
@@ -97,6 +107,6 @@ fileObj.close()
 
 output = a.prediction(Original_Data)
 
-print numpy.count_nonzero(output[0:TEST_SAMPLE] > 0) * 1./ TEST_SAMPLE
+print numpy.count_nonzero(output[0:TESTING_POSITIVE_SAMPLE] > 0) * 1./ TESTING_POSITIVE_SAMPLE
 
-print numpy.count_nonzero(output[TEST_SAMPLE:TEST_SAMPLE*2] < 0) * 1./ TEST_SAMPLE
+print numpy.count_nonzero(output[TESTING_POSITIVE_SAMPLE:TESTING_SAMPLE_NUM] < 0) * 1./ TESTING_NEGATIVE_SAMPLE

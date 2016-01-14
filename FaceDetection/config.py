@@ -6,6 +6,7 @@ E-mail      :   jasonleaster@163.com
 
 Description :
     This is a configure file for this project.
+
 """
 
 TRAINING_FACE    = "./newtraining/face/"
@@ -18,9 +19,15 @@ FEATURE_FILE_TESTING  = "./features/features_test.tmp"
 
 ADABOOST_FILE    = "./model.tmp"
 
-FEATURE_TYPE_NUM = 4
+FEATURE_TYPE_NUM = 2
+FEATURE_NUM = 12546
 
-POSITIVE_SAMPLE  = 15
-NEGATIVE_SAMPLE  = 45
+POSITIVE_SAMPLE  = 140
+NEGATIVE_SAMPLE  = 140
 
-TEST_SAMPLE = 30
+SAMPLE_NUM = POSITIVE_SAMPLE + NEGATIVE_SAMPLE
+
+TESTING_POSITIVE_SAMPLE = 50
+TESTING_NEGATIVE_SAMPLE = 50
+
+TESTING_SAMPLE_NUM = TESTING_NEGATIVE_SAMPLE + TESTING_POSITIVE_SAMPLE
